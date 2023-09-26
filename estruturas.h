@@ -50,25 +50,37 @@ bool vaziaLista(Lista * lista) {
     return false;
 }
 
-//Cria um novo nó com uma dada tarefa e o insere na posição ordenado pela data de inicio
+//Cria um novo nó com uma dada tarefa e o insere na posição ordenado pela data de término
 void insereLista(Lista ** lista, Tarefa * tarefa) {
     No * novo_no = (No *) malloc(sizeof(No));
     novo_no->tarefa = tarefa;
-
     Lista * no_atual = *lista;
-    if (!vaziaLista(no_atual)) {
-        while(no_atual->proximo_no != NULL && dataMenor(no_atual->proximo_no->tarefa->termino, tarefa->termino)) {
+
+    //Insere no início
+    if (vaziaLista(no_atual) || dataMenor(tarefa->termino, no_atual->tarefa->termino)) {
+        (*lista) = novo_no;
+        novo_no->proximo_no = no_atual;
+    } 
+
+    //Insere da posição 1 pra frente
+    else {
+        while(no_atual != NULL && dataMenor(no_atual->tarefa->termino, tarefa->termino)) {
             no_atual = no_atual->proximo_no;
         }
 
         novo_no->proximo_no = no_atual->proximo_no;
         no_atual->proximo_no = novo_no;
-    } 
+    }
+}
 
-    else {
-        (*lista) = novo_no;
-        novo_no->proximo_no = NULL;
-        printf("%d", novo_no->tarefa->codigo);
+//TODO PRINTAR A TAREFA COMPLETA
+//Printa todos os codigos da lista seguindo a ordem 
+void printaLista(Lista * lista) {
+    if (!vaziaLista(lista)) {
+        while (!vaziaLista(lista)) {
+            printf("%d ", lista->tarefa->codigo);
+            lista = lista->proximo_no;
+        }
     }
 }
 
