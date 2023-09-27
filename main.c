@@ -153,7 +153,10 @@ void editaTarefa(int codigo, Fila * filas[], Lista * pendentes) {
             scanf("%d", &tarefa->status);
             break;
         case 5:
-            printf("%d", &tarefa->prioridade);
+            printf("Nova prioridade: ");
+            fflush(stdin);
+            scanf("%d", &tarefa->prioridade);
+            break;
         default: 
             printf("Escolha invalida");
     }
