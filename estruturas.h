@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 //* TAREFA
 typedef struct {
@@ -9,6 +10,15 @@ typedef struct {
     int mes;
     int ano;
 } Data;
+
+//Retorna true se a data comparada for mais antiga que a data base
+bool dataMenor (Data data_comparada, Data data_base) {
+    if (data_comparada.ano < data_base.ano) return true;
+    else if (data_comparada.mes < data_base.mes) return true;
+    else if (data_comparada.dia < data_base.dia) return true;
+
+    return false;
+}
 
 typedef struct{
     int codigo;
@@ -22,7 +32,7 @@ typedef struct{
 
 //*NO
 typedef struct No{
-    Tarefa tarefa;
+    Tarefa * tarefa;
     struct No * proximo_no;
 } No;
 
@@ -40,12 +50,38 @@ bool vaziaLista(Lista * lista) {
     return false;
 }
 
-//Cria um novo nó com uma dada tarefa e o insere na posição 0
-void insereLista(Lista ** lista, Tarefa tarefa) {
+//Cria um novo nó com uma dada tarefa e o insere na posição ordenado pela data de término
+void insereLista(Lista ** lista, Tarefa * tarefa) {
     No * novo_no = (No *) malloc(sizeof(No));
     novo_no->tarefa = tarefa;
-    novo_no->proximo_no = (*lista);
-    *lista = novo_no;
+    Lista * no_atual = *lista;
+
+    //Insere no início
+    if (vaziaLista(no_atual) || dataMenor(tarefa->termino, no_atual->tarefa->termino)) {
+        (*lista) = novo_no;
+        novo_no->proximo_no = no_atual;
+    } 
+
+    //Insere da posição 1 pra frente
+    else {
+        while(no_atual != NULL && dataMenor(no_atual->tarefa->termino, tarefa->termino)) {
+            no_atual = no_atual->proximo_no;
+        }
+
+        novo_no->proximo_no = no_atual->proximo_no;
+        no_atual->proximo_no = novo_no;
+    }
+}
+
+//TODO PRINTAR A TAREFA COMPLETA
+//Printa todos os codigos da lista seguindo a ordem 
+void printaLista(Lista * lista) {
+    if (!vaziaLista(lista)) {
+        while (!vaziaLista(lista)) {
+            printf("%d ", lista->tarefa->codigo);
+            lista = lista->proximo_no;
+        }
+    }
 }
 
 //*FILA
@@ -53,7 +89,7 @@ typedef struct {
     No * inicio;
     No * fim;
 } Fila;
-
+    
 //Cria uma nova fila com o início e o fim nulos
 Fila * criaFila() {
     Fila * nova_fila = (Fila *) malloc(sizeof(Fila));
@@ -70,7 +106,7 @@ bool vaziaFila(Fila * fila) {
 }
 
 //Cria um novo nó com uma dada tarefa e o insere na fila
-void insereFila(Fila * fila, Tarefa tarefa) {
+void insereFila(Fila * fila, Tarefa * tarefa) {
     No * novo_no = (No *) malloc(sizeof(No));
     novo_no->tarefa = tarefa;
 
