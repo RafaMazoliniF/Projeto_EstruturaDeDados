@@ -26,12 +26,6 @@ int main() {
     Lista * pendentes = criaLista();
     Lista * concluidas = criaLista();  
 
-    cadastraNovaTarefa(filas, &pendentes, criaTarefa(&codigo_atual));
-
-    editaTarefa(0, filas, pendentes);
-    printf("%d", getTarefa(0, pendentes, filas)->inicio.dia);
-
-
     return 0;
 }
 
