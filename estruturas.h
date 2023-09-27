@@ -89,7 +89,7 @@ typedef struct {
     No * inicio;
     No * fim;
 } Fila;
-
+    
 //Cria uma nova fila com o início e o fim nulos
 Fila * criaFila() {
     Fila * nova_fila = (Fila *) malloc(sizeof(Fila));
