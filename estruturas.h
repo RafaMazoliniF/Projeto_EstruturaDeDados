@@ -141,3 +141,13 @@ void insereFila(Fila * fila, Tarefa * tarefa) {
         fila->fim->proximo_no = NULL;
     }
 }
+
+void printaFila(Fila * fila) {
+    No * inicio = fila->inicio;
+    if (!vaziaFila(fila)) {
+        while (inicio != NULL) {
+            printaTarefa(*(inicio->tarefa));
+            inicio = inicio->proximo_no;
+        }
+    }
+}
