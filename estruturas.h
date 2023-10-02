@@ -4,6 +4,14 @@
 #include <string.h>
 #include <math.h>
 
+void printaDiv() {
+    printf("\n");
+    for (int i = 0; i < 50; i++) {
+        printf("=");
+    }
+    printf("\n");
+}
+
 //* TAREFA
 typedef struct {
     int dia;
@@ -54,17 +62,18 @@ bool vaziaLista(Lista * lista) {
 void insereLista(Lista ** lista, Tarefa * tarefa) {
     No * novo_no = (No *) malloc(sizeof(No));
     novo_no->tarefa = tarefa;
+    novo_no->proximo_no = NULL;
     Lista * no_atual = *lista;
 
     //Insere no início
     if (vaziaLista(no_atual) || dataMenor(tarefa->termino, no_atual->tarefa->termino)) {
-        (*lista) = novo_no;
         novo_no->proximo_no = no_atual;
+        (*lista) = novo_no;
     } 
 
     //Insere da posição 1 pra frente
     else {
-        while(no_atual != NULL && dataMenor(no_atual->tarefa->termino, tarefa->termino)) {
+        while(no_atual->proximo_no != NULL && dataMenor(no_atual->tarefa->termino, tarefa->termino)) {
             no_atual = no_atual->proximo_no;
         }
 
@@ -73,12 +82,24 @@ void insereLista(Lista ** lista, Tarefa * tarefa) {
     }
 }
 
-//TODO PRINTAR A TAREFA COMPLETA
+//printa todos os detalhes da tarefa
+void printaTarefa(Tarefa tarefa) {
+    printaDiv();
+    printf("TAREFA \"%s\":\n\n", tarefa.nome);
+    printf("Projeto: \"%s\";\n", tarefa.projeto);
+    printf("Data de Início: %02d/%02d/%04d;\n", tarefa.inicio.dia, tarefa.inicio.mes, tarefa.inicio.ano);
+    printf("Data de Término: %02d/%02d/%04d;\n", tarefa.termino.dia, tarefa.termino.mes, tarefa.termino.ano);
+    printf("Status: %d;\n", tarefa.status);
+    printf("Prioridade: %d;\n", tarefa.prioridade);
+    printf("Código: %d;", tarefa.codigo);
+    printaDiv();
+}
+
 //Printa todos os codigos da lista seguindo a ordem 
 void printaLista(Lista * lista) {
     if (!vaziaLista(lista)) {
         while (!vaziaLista(lista)) {
-            printf("%d ", lista->tarefa->codigo);
+            printaTarefa(*(lista->tarefa));
             lista = lista->proximo_no;
         }
     }
