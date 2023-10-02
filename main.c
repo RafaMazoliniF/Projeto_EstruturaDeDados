@@ -45,7 +45,6 @@ int main() {
     cadastraNovaTarefa(filas, &pendentes, criaTarefa(&codigo_atual, hoje));
     cadastraNovaTarefa(filas, &pendentes, criaTarefa(&codigo_atual, hoje));
 
-    printaLista(pendentes);
 
     return 0;
 }
