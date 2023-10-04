@@ -4,6 +4,15 @@
 #include <string.h>
 #include <math.h>
 
+void limpaBuffer() {
+    #ifdef __linux__
+        __fpurge(stdin);
+    #elif _WIN32
+        limpaBuffer();
+    #else
+    #endif
+}
+
 void printaDiv() {
     printf("\n");
     for (int i = 0; i < 50; i++) {
@@ -166,7 +175,7 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
 
     //NOME
     printf("Digite o nome da tarefa: ");
-    fflush(stdin);
+    limpaBuffer();
     fgets(nova_tarefa->nome, 30, stdin);
     int nome_i = 0;
     while (nova_tarefa->nome[nome_i] != '\n') nome_i++;
@@ -174,7 +183,6 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
 
     //PROJETO
     printf("\nDigite o nome do projeto: ");
-    fflush(stdin);
     fgets(nova_tarefa->projeto, 30, stdin);
     int projeto_i = 0;
     while (nova_tarefa->projeto[projeto_i] != '\n') projeto_i++;
@@ -188,18 +196,18 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
 
     //DATA TERMINO
     printf("\nDigite a data de termino:");
-    printf("\nDia: "); fflush(stdin); scanf("%d", &nova_tarefa->termino.dia);
-    printf("Mes: "); fflush(stdin); scanf("%d", &nova_tarefa->termino.mes);
-    printf("Ano: "); fflush(stdin); scanf("%d", &nova_tarefa->termino.ano);
+    printf("\nDia: "); limpaBuffer(); scanf("%d", &nova_tarefa->termino.dia);
+    printf("Mes: "); limpaBuffer(); scanf("%d", &nova_tarefa->termino.mes);
+    printf("Ano: "); limpaBuffer(); scanf("%d", &nova_tarefa->termino.ano);
 
     //STATUS
     printf("\nDigite o status da tarefa ([1] => atrasada; [0] => em dia; [-1] => pendente)\n> "); 
-    fflush(stdin); 
+    limpaBuffer(); 
     scanf("%d", &nova_tarefa->status);
 
     //PRIORIDADE
     printf("\nDigite a prioridade da tarefa ([1] => Alta; [2] => Media; [3] => Baixa)\n> ");
-    fflush(stdin);
+    limpaBuffer();
     scanf("%d", &nova_tarefa->prioridade);
     getchar();
 
@@ -242,49 +250,119 @@ Tarefa * getTarefa(int codigo, Lista * pendentes, Fila * filas[]) {
     return NULL; // Default
 }
 
+//TODO PERGUNTAR SE EXCLUI DA LISTA DE CONCLUIDAS
+No * retiraTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
+    Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
+    No * no_excluido;
+    
+    //Procura na lista de pendentes
+    if (tarefa->status == -1) {
+
+        if ((*pendentes)->tarefa == tarefa) {
+            no_excluido = *pendentes;
+            (*pendentes) = (*pendentes)->proximo_no;
+        }
+
+        else {
+            Lista * pendentes_aux = *pendentes;
+
+            while(pendentes_aux->proximo_no->tarefa != tarefa && pendentes_aux->proximo_no != NULL) {
+                pendentes_aux = pendentes_aux->proximo_no;
+            }
+
+            no_excluido = pendentes_aux->proximo_no;
+            pendentes_aux->proximo_no = pendentes_aux->proximo_no->proximo_no;
+        }
+    }
+
+    else {
+        Fila * fila = filas[tarefa->prioridade - 1];
+
+        if (fila->inicio->tarefa == tarefa) {
+            no_excluido = fila->inicio;
+            fila->inicio = fila->inicio->proximo_no;
+        }
+
+        else {
+            No * aux = fila->inicio;
+
+            while (aux->proximo_no->tarefa != tarefa && aux->proximo_no != NULL) {
+                aux = aux->proximo_no;
+            }
+
+            no_excluido = aux->proximo_no;
+            aux->proximo_no = aux->proximo_no->proximo_no;
+            if (aux->proximo_no == NULL) fila->fim = aux;
+        }
+    }
+
+    return no_excluido;
+}
+
+void deletaTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
+    No * no_liberado = retiraTarefa(codigo, pendentes, filas);
+    free(no_liberado->tarefa);
+    free(no_liberado);
+}
+
 //Recebe o codigo de uma tarefa e altera as suas informacoes
-void editaTarefa(int codigo, Fila * filas[], Lista * pendentes) {
-    Tarefa * tarefa = getTarefa(codigo, pendentes, filas);
+void editaTarefa(int codigo, Fila * filas[], Lista ** pendentes) {
+    Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
     
     printaDiv();
     printf("AREA DE EDICAO DE TAREFA\n\n");
 
     printf("Para editar, digite:\n[0] Nome\n[1] Projeto;\n[2] Data de inicio;\n[3] Data de termino;\n[4] Status;\n[5] Prioridade;\n> ");
     int escolha;
-    fflush(stdin);
+    limpaBuffer();
     scanf("%d", &escolha);
 
     switch (escolha) {
         case 0:
-            printf("\n Novo nome: ");
-            fflush(stdin);
+            printf("\nNovo nome: ");
+            limpaBuffer();
             fgets(tarefa->nome, 30, stdin);
+            int nome_i = 0;
+            while (tarefa->nome[nome_i] != '\n') nome_i++;
+            tarefa->nome[nome_i] = '\0';
             break;
         case 1:
-            printf("\n Novo projeto: ");
-            fflush(stdin);
-            fgets(tarefa->nome, 30, stdin);
+            printf("\nNovo projeto: ");
+            limpaBuffer();
+            fgets(tarefa->projeto, 30, stdin);
+            int projeto_i = 0;
+            while (tarefa->projeto[projeto_i] != '\n') projeto_i++;
+            tarefa->projeto[projeto_i] = '\0';
             break;
         case 2:
             printf("Nova data de inicio:");
-            printf("\nDia: "); fflush(stdin); scanf("%d", &tarefa->inicio.dia);
-            printf("Mes: "); fflush(stdin); scanf("%d", &tarefa->inicio.mes);
-            printf("Ano: "); fflush(stdin); scanf("%d", &tarefa->inicio.ano);
+            printf("\nDia: "); limpaBuffer(); scanf("%d", &tarefa->inicio.dia);
+            printf("Mes: "); limpaBuffer(); scanf("%d", &tarefa->inicio.mes);
+            printf("Ano: "); limpaBuffer(); scanf("%d", &tarefa->inicio.ano);
             break;
         case 3:
             printf("Nova data de termino:");
-            printf("\nDia: "); fflush(stdin); scanf("%d", &tarefa->inicio.dia);
-            printf("Mes: "); fflush(stdin); scanf("%d", &tarefa->inicio.mes);
-            printf("Ano: "); fflush(stdin); scanf("%d", &tarefa->inicio.ano);
+            printf("\nDia: "); limpaBuffer(); scanf("%d", &tarefa->termino.dia);
+            printf("Mes: "); limpaBuffer(); scanf("%d", &tarefa->termino.mes);
+            printf("Ano: "); limpaBuffer(); scanf("%d", &tarefa->termino.ano);
             break;
         case 4:
             printf("Novo status: ");
-            fflush(stdin);
-            scanf("%d", &tarefa->status);
+            limpaBuffer();
+            int status_atualizado;
+            scanf("%d", &status_atualizado);
+
+            if (status_atualizado == -1) {
+                free(retiraTarefa(codigo, pendentes, filas));
+                insereLista(pendentes, tarefa);
+            }
+    
+            tarefa->status = status_atualizado;
+
             break;
         case 5:
             printf("Nova prioridade: ");
-            fflush(stdin);
+            limpaBuffer();
             scanf("%d", &tarefa->prioridade);
             break;
         default: 

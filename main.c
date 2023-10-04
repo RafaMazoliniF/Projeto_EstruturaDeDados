@@ -60,12 +60,40 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
     }
 }
 
-void escolha2() {
-
+void escolha2(Fila * filas[], Lista ** pendentes, int * codigo_atual, int * hoje) {
+    cadastraNovaTarefa(filas, pendentes, criaTarefa(codigo_atual, hoje));
 }
 
-void escolha3(){
+void escolha3(Lista ** pendentes, Lista * filas[]){
+    limpaTela();
 
+    printf("Digite o codigo da tarefa a ser aberta: ");
+    limpaBuffer();
+    int codigo;
+    scanf("%d", &codigo);
+
+    limpaTela();
+    printaTarefa(*getTarefa(codigo, *pendentes, filas));
+
+    printf("Digite um numero para escolher uma acao:\n[1] Editar;\n[2] Excluir;\n[3] Sair;\n> ");
+    int escolha;
+    limpaBuffer();
+    scanf("%d", &escolha);
+
+    switch (escolha) {
+        case 1:
+            editaTarefa(codigo, filas, pendentes);
+            limpaTela();
+            printf("TAREFA ATUALIZADA");
+            printaTarefa(*getTarefa(codigo, *pendentes, filas));
+            break;
+        case 2:
+            deletaTarefa(codigo, pendentes, filas);
+            break;
+        case 3:
+        default:
+            break;
+    }
 }
 
 int main() {
@@ -112,7 +140,7 @@ int main() {
         printf("\nDigite um numero para escolher uma acao:\n[1] Mostrar as tarefas existentes; \n[2] Adicionar uma nova tarefa;\n[3] Abrir uma tarefa; \n[4] Fechar;\n> ");
         
         int escolha; 
-        fflush(stdin);
+        
         scanf("%d", &escolha);
         
         switch (escolha){
@@ -120,10 +148,10 @@ int main() {
                 escolha1(filas, pendentes, concluidas);
                 break;
             case 2:
-                escolha2();
+                escolha2(filas, &pendentes, &codigo_atual, hoje);
                 break;
             case 3:
-                escolha3();
+                escolha3(&pendentes, filas);
                 break;
             case 4: 
                 terminou = true;
