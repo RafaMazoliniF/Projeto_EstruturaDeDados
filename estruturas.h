@@ -8,7 +8,7 @@ void limpaBuffer() {
     #ifdef __linux__
         __fpurge(stdin);
     #elif _WIN32
-        limpaBuffer();
+        fflush(stdin);
     #else
     #endif
 }
@@ -153,6 +153,16 @@ void insereFila(Fila * fila, Tarefa * tarefa) {
     }
 }
 
+No * desenfila(Fila * fila) {
+    if (!vaziaFila(fila)) {
+        No * no_retirado = fila->inicio;
+        fila->inicio = fila->inicio->proximo_no;
+        return no_retirado;
+    }
+
+    return NULL;
+}
+
 void printaFila(Fila * fila) {
     No * inicio = fila->inicio;
     if (!vaziaFila(fila)) {
@@ -250,7 +260,7 @@ Tarefa * getTarefa(int codigo, Lista * pendentes, Fila * filas[]) {
     return NULL; // Default
 }
 
-//TODO PERGUNTAR SE EXCLUI DA LISTA DE CONCLUIDAS
+
 No * retiraTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
     Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
     No * no_excluido;
@@ -284,15 +294,19 @@ No * retiraTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
         }
 
         else {
-            No * aux = fila->inicio;
+            No * no_aux;
 
-            while (aux->proximo_no->tarefa != tarefa && aux->proximo_no != NULL) {
-                aux = aux->proximo_no;
+            bool achou_tarefa = false;
+            while (!achou_tarefa) {
+                no_aux = desenfila(fila);
+                if (no_aux->tarefa->codigo == codigo) {
+                    no_excluido = no_aux;
+                    achou_tarefa = true;
+                } else {
+                    insereFila(fila, no_aux->tarefa);
+                    free(no_aux);
+                }
             }
-
-            no_excluido = aux->proximo_no;
-            aux->proximo_no = aux->proximo_no->proximo_no;
-            if (aux->proximo_no == NULL) fila->fim = aux;
         }
     }
 
@@ -363,7 +377,9 @@ void editaTarefa(int codigo, Fila * filas[], Lista ** pendentes) {
         case 5:
             printf("Nova prioridade: ");
             limpaBuffer();
+            free(retiraTarefa(codigo, pendentes, filas));
             scanf("%d", &tarefa->prioridade);
+            insereFila(filas[tarefa->prioridade -1], tarefa);
             break;
         default: 
             printf("Escolha invalida");
