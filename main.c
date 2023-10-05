@@ -134,6 +134,8 @@ int main() {
     Lista * pendentes = criaLista();
     Lista * concluidas = criaLista();  
 
+    cadastraNovaTarefa(filas, &pendentes, &tarefa1);
+
     //INICIO DO PROGRAMA
     printf("===== GERENCIADOR DE TAREFAS =====\n");
     while (!terminou) {
