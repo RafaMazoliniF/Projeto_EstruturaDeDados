@@ -211,9 +211,8 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
     printf("Ano: "); limpaBuffer(); scanf("%d", &nova_tarefa->termino.ano);
 
     //STATUS
-    printf("\nDigite o status da tarefa ([1] => atrasada; [0] => em dia; [-1] => pendente)\n> "); 
-    limpaBuffer(); 
-    scanf("%d", &nova_tarefa->status);
+    if (dataMenor(nova_tarefa->termino, nova_tarefa->inicio)) nova_tarefa->status = 1;
+    else nova_tarefa->status = 0;
 
     //PRIORIDADE
     printf("\nDigite a prioridade da tarefa ([1] => Alta; [2] => Media; [3] => Baixa)\n> ");
@@ -232,14 +231,8 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
 }
 
 //Recebe uma tarefa e insere em uma das filas ou na lista de pendentes
-void cadastraNovaTarefa(Fila * filas[], Lista ** pendentes, Tarefa * tarefa) {
-    if (tarefa->status == -1) {
-        insereLista(pendentes, tarefa);
-    }
-
-    else {
-        insereFila(filas[tarefa->prioridade - 1], tarefa);
-    }
+void cadastraNovaTarefa(Fila * filas[], Tarefa * tarefa) {
+    insereFila(filas[tarefa->prioridade - 1], tarefa);
 }
 
 //retorna a tarefa com o código passado

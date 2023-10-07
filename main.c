@@ -60,11 +60,12 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
     }
 }
 
-void escolha2(Fila * filas[], Lista ** pendentes, int * codigo_atual, int * hoje) {
-    cadastraNovaTarefa(filas, pendentes, criaTarefa(codigo_atual, hoje));
+void escolha2(Fila * filas[], int * codigo_atual, int * hoje) {
+    limpaTela();
+    cadastraNovaTarefa(filas, criaTarefa(codigo_atual, hoje));
 }
 
-void escolha3(Lista ** pendentes, Lista * filas[]){
+void escolha3(Lista ** pendentes, Lista * filas[], Lista ** concluidas){
     limpaTela();
 
     printf("Digite o codigo da tarefa a ser aberta: ");
@@ -72,10 +73,12 @@ void escolha3(Lista ** pendentes, Lista * filas[]){
     int codigo;
     scanf("%d", &codigo);
 
-    limpaTela();
-    printaTarefa(*getTarefa(codigo, *pendentes, filas));
+    Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
 
-    printf("Digite um numero para escolher uma acao:\n[1] Editar;\n[2] Excluir;\n[3] Sair;\n> ");
+    limpaTela();
+    printaTarefa(*tarefa);
+
+    printf("Digite um numero para escolher uma acao:\n[1] Editar;\n[2] Excluir;\n[3] Marcar como concluida;\n[4] Sair;\n> ");
     int escolha;
     limpaBuffer();
     scanf("%d", &escolha);
@@ -85,15 +88,20 @@ void escolha3(Lista ** pendentes, Lista * filas[]){
             editaTarefa(codigo, filas, pendentes);
             limpaTela();
             printf("TAREFA ATUALIZADA");
-            printaTarefa(*getTarefa(codigo, *pendentes, filas));
+            printaTarefa(*tarefa);
             break;
         case 2:
             deletaTarefa(codigo, pendentes, filas);
             break;
         case 3:
+            free(retiraTarefa(codigo, pendentes, filas));
+            insereLista(concluidas, tarefa);
+        case 4:
         default:
             break;
     }
+
+    limpaTela();
 }
 
 int main() {
@@ -111,7 +119,7 @@ int main() {
 
     //TAREFAS PRE-EXISTENTES ----- YAMA ----- cria algumas dessas (o quanto e como voce achar necessario) nesse modelo
     Tarefa tarefa1 = {
-        .codigo = codigo_atual, //AS OUTRAS TAREFAS DEVEM TER <codigo_atual++>
+        .codigo = codigo_atual++, //AS OUTRAS TAREFAS DEVEM TER <codigo_atual++>
         .nome = "Terminar o projeto",
         .projeto = "Gerenciamento",
         .inicio.dia = 20,
@@ -134,7 +142,7 @@ int main() {
     Lista * pendentes = criaLista();
     Lista * concluidas = criaLista();  
 
-    cadastraNovaTarefa(filas, &pendentes, &tarefa1);
+    cadastraNovaTarefa(filas, &tarefa1);
 
     //INICIO DO PROGRAMA
     printf("===== GERENCIADOR DE TAREFAS =====\n");
@@ -150,10 +158,10 @@ int main() {
                 escolha1(filas, pendentes, concluidas);
                 break;
             case 2:
-                escolha2(filas, &pendentes, &codigo_atual, hoje);
+                escolha2(filas, &codigo_atual, hoje);
                 break;
             case 3:
-                escolha3(&pendentes, filas);
+                escolha3(&pendentes, filas, &concluidas);
                 break;
             case 4: 
                 terminou = true;
