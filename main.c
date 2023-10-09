@@ -28,9 +28,9 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
             }
 
             printf("\n\nTAREFAS PENDENTES");
-            printaLista(pendentes);
+            printaLista(pendentes, false);
             printf("\n\nTAREFAS CONCLUIDAS");
-            printaLista(concluidas);
+            printaLista(concluidas, true);
             break;
         case 2:
             limpaTela();
@@ -45,13 +45,13 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
             limpaTela();
 
             printf("\n\nTAREFAS PENDENTES");
-            printaLista(pendentes);
+            printaLista(pendentes, false);
             break;
         case 4:
             limpaTela();
 
             printf("\n\nTAREFAS CONCLUIDAS");
-            printaLista(concluidas);
+            printaLista(concluidas, true);
             break;
         case 5:
         default: 
@@ -60,12 +60,12 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
     }
 }
 
-void escolha2(Fila * filas[], int * codigo_atual, int * hoje) {
+void escolha2(Fila * filas[], int * codigo_atual, int hoje[]) {
     limpaTela();
     cadastraNovaTarefa(filas, criaTarefa(codigo_atual, hoje));
 }
 
-void escolha3(Lista ** pendentes, Lista * filas[], Lista ** concluidas){
+void escolha3(Lista ** pendentes, Lista * filas[], Lista ** concluidas, int hoje[]){
     limpaTela();
 
     printf("Digite o codigo da tarefa a ser aberta: ");
@@ -96,6 +96,10 @@ void escolha3(Lista ** pendentes, Lista * filas[], Lista ** concluidas){
         case 3:
             free(retiraTarefa(codigo, pendentes, filas));
             insereLista(concluidas, tarefa);
+
+            tarefa->termino.dia = hoje[0];
+            tarefa->termino.mes = hoje[1];
+            tarefa->termino.ano = hoje[2];
         case 4:
         default:
             break;
@@ -161,7 +165,7 @@ int main() {
                 escolha2(filas, &codigo_atual, hoje);
                 break;
             case 3:
-                escolha3(&pendentes, filas, &concluidas);
+                escolha3(&pendentes, filas, &concluidas, hoje);
                 break;
             case 4: 
                 terminou = true;
