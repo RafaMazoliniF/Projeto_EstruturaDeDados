@@ -104,12 +104,33 @@ void printaTarefa(Tarefa tarefa) {
     printaDiv();
 }
 
-//Printa todos os codigos da lista seguindo a ordem 
-void printaLista(Lista * lista) {
+//Printa todos os codigos da lista seguindo a ordem. Concluida é um booleano que diz se a lista é de tarefas concluidas.
+void printaLista(Lista * lista, bool concluida) {
     if (!vaziaLista(lista)) {
-        while (!vaziaLista(lista)) {
-            printaTarefa(*(lista->tarefa));
-            lista = lista->proximo_no;
+        if (concluida) {
+            Lista * lista_aux = lista;
+
+            printf("\nCONCLUIDAS COM ATRASO\n");
+            while (!vaziaLista(lista)) {
+                if (lista->tarefa->status == 1) 
+                    printaTarefa(*(lista->tarefa));
+                lista = lista->proximo_no;
+            }
+
+            lista = lista_aux;
+
+            printf("\nCONCLUIDAS SEM ATRASOS\n");
+            while (!vaziaLista(lista)) {
+                if (lista->tarefa->status == 0) 
+                    printaTarefa(*(lista->tarefa));
+                lista = lista->proximo_no;
+            }
+            
+        } else {
+            while (!vaziaLista(lista)) {
+                printaTarefa(*(lista->tarefa));
+                lista = lista->proximo_no;
+            }
         }
     }
 
@@ -363,6 +384,11 @@ void editaTarefa(int codigo, Fila * filas[], Lista ** pendentes) {
                 free(retiraTarefa(codigo, pendentes, filas));
                 insereLista(pendentes, tarefa);
             }
+
+            else if(status_atualizado == 0 || status_atualizado == 1) {
+                free(retiraTarefa(codigo, pendentes, filas));
+                insereFila(filas[tarefa->prioridade - 1], tarefa);
+            }
     
             tarefa->status = status_atualizado;
 
@@ -376,7 +402,11 @@ void editaTarefa(int codigo, Fila * filas[], Lista ** pendentes) {
             break;
         default: 
             printf("Escolha invalida");
+            break;
+        
     }
+
+    if (dataMenor(tarefa->termino, tarefa->inicio) && tarefa->status != -1) tarefa->status = 1;
 
     printaDiv();
 }
