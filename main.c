@@ -10,7 +10,7 @@ void limpaTela() {
     #endif
 }
 
-void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
+void escolha1(Fila ** filas, Lista * pendentes, Lista * concluidas) {
     limpaTela();
     printf("Mostrar quais tarefas?\n[1] Todas;\n[2] Somente as ativas;\n[3] Somente as pendentes\n[4] Somente as concluidas;\n[5] Voltar;\n> ");
     
@@ -60,7 +60,7 @@ void escolha1(Fila * filas[], Lista * pendentes, Lista * concluidas) {
     }
 }
 
-void escolha2(Fila * filas[], int * codigo_atual, int hoje[]) {
+void escolha2(Fila ** filas, int * codigo_atual, int hoje[]) {
     limpaTela();
     cadastraNovaTarefa(filas, criaTarefa(codigo_atual, hoje));
 }
@@ -137,7 +137,7 @@ int main() {
     };
 
     //Cria as filas de tarefas por prioridade
-    Fila * filas[3];
+    Fila ** filas = (Fila **) malloc(3 * sizeof(Fila));
     for (int i = 0; i < 3; i++) {
         filas[i] = criaFila(); 
     }
