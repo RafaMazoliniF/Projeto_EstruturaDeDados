@@ -174,6 +174,7 @@ void insereFila(Fila * fila, Tarefa * tarefa) {
     }
 }
 
+//Se a lista não for vazia, retria e retorna o nó da frente.
 No * desenfila(Fila * fila) {
     if (!vaziaFila(fila)) {
         No * no_retirado = fila->inicio;
@@ -184,6 +185,7 @@ No * desenfila(Fila * fila) {
     return NULL;
 }
 
+//Printa todas as tarefas de uma dada fila
 void printaFila(Fila * fila) {
     No * inicio = fila->inicio;
     if (!vaziaFila(fila)) {
@@ -196,7 +198,7 @@ void printaFila(Fila * fila) {
     else printf("\nEsta fila está vazia.\n");
 }
 
-
+//Cria uma nova tarefa e retorna a mesma
 Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
     
     Tarefa * nova_tarefa = (Tarefa *) malloc(sizeof(Tarefa));
@@ -252,12 +254,12 @@ Tarefa * criaTarefa(int * codigo_atual, int hoje[]) {
 }
 
 //Recebe uma tarefa e insere em uma das filas ou na lista de pendentes
-void cadastraNovaTarefa(Fila * filas[], Tarefa * tarefa) {
+void cadastraNovaTarefa(Fila ** filas, Tarefa * tarefa) {
     insereFila(filas[tarefa->prioridade - 1], tarefa);
 }
 
 //retorna a tarefa com o código passado
-Tarefa * getTarefa(int codigo, Lista * pendentes, Fila * filas[]) {
+Tarefa * getTarefa(int codigo, Lista * pendentes, Fila ** filas) {
     while (pendentes != NULL) {
         if (pendentes->tarefa->codigo == codigo) return pendentes->tarefa;
         pendentes = pendentes->proximo_no;
@@ -274,8 +276,8 @@ Tarefa * getTarefa(int codigo, Lista * pendentes, Fila * filas[]) {
     return NULL; // Default
 }
 
-
-No * retiraTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
+//Retira a tarefa com o dado código de onde ela estiver (Seja uma fila ou lista)
+No * retiraTarefa(int codigo, Lista ** pendentes, Fila ** filas) {
     Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
     No * no_excluido;
     
@@ -327,14 +329,15 @@ No * retiraTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
     return no_excluido;
 }
 
-void deletaTarefa(int codigo, Lista ** pendentes, Fila * filas[]) {
+//Libera a memória de uma tarefa 
+void deletaTarefa(int codigo, Lista ** pendentes, Fila ** filas) {
     No * no_liberado = retiraTarefa(codigo, pendentes, filas);
     free(no_liberado->tarefa);
     free(no_liberado);
 }
 
 //Recebe o codigo de uma tarefa e altera as suas informacoes
-void editaTarefa(int codigo, Fila * filas[], Lista ** pendentes) {
+void editaTarefa(int codigo, Fila ** filas, Lista ** pendentes) {
     Tarefa * tarefa = getTarefa(codigo, *pendentes, filas);
     
     printaDiv();
