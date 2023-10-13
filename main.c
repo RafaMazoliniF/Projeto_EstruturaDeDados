@@ -121,15 +121,71 @@ int main() {
     info_tempo = localtime(&tempo_atual);
     int hoje[3] = { info_tempo->tm_mday, info_tempo->tm_mon + 1, info_tempo->tm_year + 1900 };
 
-    //TAREFAS PRE-EXISTENTES ----- YAMA ----- cria algumas dessas (o quanto e como voce achar necessario) nesse modelo
+    //TAREFAS PRE-EXISTENTES 
     Tarefa tarefa1 = {
-        .codigo = codigo_atual++, //AS OUTRAS TAREFAS DEVEM TER <codigo_atual++>
+        .codigo = codigo_atual++, 
         .nome = "Terminar o projeto",
         .projeto = "Gerenciamento",
         .inicio.dia = 20,
         .inicio.mes = 9,
         .inicio.ano = 2023,
-        .termino.dia = 10,
+        .termino.dia = 13,
+        .termino.mes = 10,
+        .termino.ano = 2023,
+        .status = 0,
+        .prioridade = 1
+    };
+
+    Tarefa tarefa2 = {
+        .codigo = codigo_atual++, 
+        .nome = "Sprint 3",
+        .projeto = "Estatistica",
+        .inicio.dia = 20,
+        .inicio.mes = 10,
+        .inicio.ano = 2023,
+        .termino.dia = 12,
+        .termino.mes = 10,
+        .termino.ano = 2023,
+        .status = 0,
+        .prioridade = 1
+    };
+
+    Tarefa tarefa3 = {
+        .codigo = codigo_atual++, 
+        .nome = "Sprint 4",
+        .projeto = "Estatistica",
+        .inicio.dia = 20,
+        .inicio.mes = 10,
+        .inicio.ano = 2023,
+        .termino.dia = 20,
+        .termino.mes = 10,
+        .termino.ano = 2023,
+        .status = 0,
+        .prioridade = 2
+    };
+
+    Tarefa tarefa4 = {
+        .codigo = codigo_atual++, 
+        .nome = "Sprint 5",
+        .projeto = "Estatistica",
+        .inicio.dia = 20,
+        .inicio.mes = 10,
+        .inicio.ano = 2023,
+        .termino.dia = 26,
+        .termino.mes = 10,
+        .termino.ano = 2023,
+        .status = 0,
+        .prioridade = 3
+    };
+
+    Tarefa tarefa5 = {
+        .codigo = codigo_atual++, 
+        .nome = "Sprint 2",
+        .projeto = "Estatistica",
+        .inicio.dia = 20,
+        .inicio.mes = 10,
+        .inicio.ano = 2023,
+        .termino.dia = 9,
         .termino.mes = 10,
         .termino.ano = 2023,
         .status = 0,
